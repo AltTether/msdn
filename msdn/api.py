@@ -1,4 +1,6 @@
-import requests
+import json
+
+from requests import Request, Session
 
 
 API_VERSION = 'v1'
@@ -17,11 +19,17 @@ class MsdnCall(object):
             return self.call_cls(access_token=self.access_token,
                                  call_cls=self.call_cls,
                                  uri=self.build_uri(self.uri, k))
-    def __call__(self):
-        session = requests.Session()
-        session.headers.update({'Authorization': 'Bearer ' + self.access_token})
-        print(self.uri)
-        response = session.get(self.uri)
+    def __call__(self, **kargs):
+        params = dict(kargs)
+
+        session = Session()
+        request = Request('GET', self.uri)
+        prepare_request = session.prepare_request(request)
+
+        prepare_request.headers['Authorization'] = 'Bearer ' + self.access_token
+        prepare_request.params = params
+
+        response = session.send(prepare_request)
         return response
 
     def build_uri(self, base, part):
