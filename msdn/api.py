@@ -38,6 +38,10 @@ class MsdnCall(object):
             except:
                 print('_id params not found')
 
+        for key, value in params.items():
+            if type(value) is bool:
+                params[key] = 'true' if value else 'false'
+
         headers = {'Authorization': 'Bearer ' + self.access_token}
         response = None
         if self.method == 'GET':
