@@ -1,35 +1,54 @@
 import json
+import requests
 
-from requests import Request, Session
+from .actions import POST_ACTIONS, PATCH_ACTIONS
 
 
 API_VERSION = 'v1'
 API_ENDPOINT_START = 'api'
 
 class MsdnCall(object):
-    def __init__(self, access_token=None, call_cls=None, uri=None):
+    def __init__(self, access_token=None, call_cls=None, uri=None, method='GET'):
         self.access_token = access_token
         self.call_cls = call_cls
         self.uri = uri
+        self.method = method
 
     def __getattr__(self, k):
         try:
             object.__getattr__(self, k)
         except AttributeError:
+            if k in POST_ACTIONS:
+                self.method = 'POST'
+            if k in PATCH_ACTIONS:
+                self.method = 'PATCH'
+
             return self.call_cls(access_token=self.access_token,
                                  call_cls=self.call_cls,
-                                 uri=self.build_uri(self.uri, k))
+                                 uri=self.build_uri(self.uri, k),
+                                 method=self.method)
     def __call__(self, **kargs):
         params = dict(kargs)
 
-        session = Session()
-        request = Request('GET', self.uri)
-        prepare_request = session.prepare_request(request)
+        if '_id' in self.uri:
+            try:
+                _id = params['_id']
+                self.uri = self.uri.replace('_id', _id)
+                del params['_id']
+            except:
+                print('_id params not found')
 
-        prepare_request.headers['Authorization'] = 'Bearer ' + self.access_token
-        prepare_request.params = params
+        headers = {'Authorization': 'Bearer ' + self.access_token}
+        response = None
+        if self.method == 'GET':
+            response = requests.get(self.uri, headers=headers)
+        elif self.method == 'POST':
+            response = requests.post(self.uri, headers=headers, data=params)
+        elif self.method == 'PATCH':
+            response = requests.patch(self.uri, headers=headers, data=params)
+        else:
+            raise Exception()
 
-        response = session.send(prepare_request)
         return response
 
     def build_uri(self, base, part):
