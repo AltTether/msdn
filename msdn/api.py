@@ -38,6 +38,10 @@ class MsdnCall(object):
             except:
                 print('_id params not found')
 
+        if '_method' in params:
+            self.method = params['_method']
+            del params['_method']
+
         for key, value in params.items():
             if type(value) is bool:
                 params[key] = 'true' if value else 'false'
