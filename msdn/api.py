@@ -49,11 +49,13 @@ class MsdnCall(object):
         headers = {'Authorization': 'Bearer ' + self.access_token}
         response = None
         if self.method == 'GET':
-            response = requests.get(self.uri, headers=headers)
+            response = requests.get(self.uri, headers=headers, params=params)
         elif self.method == 'POST':
             response = requests.post(self.uri, headers=headers, data=params)
         elif self.method == 'PATCH':
             response = requests.patch(self.uri, headers=headers, data=params)
+        elif self.method == 'DELETE':
+            response = requests.delete(self.uri, headers=headers, data=params)
         else:
             raise Exception()
 
