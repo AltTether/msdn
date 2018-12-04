@@ -56,6 +56,8 @@ class MsdnCall(object):
         response = None
         if self.method == 'GET':
             response = requests.get(self.uri, headers=headers, params=params)
+        elif self.method == 'PUT':
+            response = requests.put(self.uri, headers=headers, params=params)
         elif self.method == 'POST':
             response = requests.post(self.uri, headers=headers, data=params)
         elif self.method == 'PATCH':
