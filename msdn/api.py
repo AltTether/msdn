@@ -46,6 +46,12 @@ class MsdnCall(object):
             if type(value) is bool:
                 params[key] = 'true' if value else 'false'
 
+            if "[]" in key:
+                continue
+            if type(value) is list:
+                params[key+"[]"] = value
+                del params[key]
+
         headers = {'Authorization': 'Bearer ' + self.access_token}
         response = None
         if self.method == 'GET':
