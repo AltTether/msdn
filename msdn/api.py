@@ -18,15 +18,16 @@ class MsdnCall(object):
         try:
             object.__getattr__(self, k)
         except AttributeError:
+            method = self.method
             if k in POST_ACTIONS:
-                self.method = 'POST'
+                method = 'POST'
             if k in PATCH_ACTIONS:
-                self.method = 'PATCH'
+                method = 'PATCH'
 
             return self.call_cls(access_token=self.access_token,
                                  call_cls=self.call_cls,
                                  uri=self.build_uri(self.uri, k),
-                                 method=self.method)
+                                 method=method)
     def __call__(self, **kargs):
         params = dict(kargs)
 
