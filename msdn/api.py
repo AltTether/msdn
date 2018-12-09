@@ -1,3 +1,4 @@
+import os
 import json
 import requests
 
@@ -30,6 +31,19 @@ class MsdnCall(object):
                                  method=method)
     def __call__(self, **kargs):
         params = dict(kargs)
+        files = dict()
+
+        have_file = False
+        if '_file' in params:
+            have_file = True
+            file_path = params['_file']
+            file_name = os.path.basename(file_path)
+            _, file_extension = os.path.splitext(file_name)
+            f = open(file_path, 'rb')
+            if file_extension == 'jpg':
+                file_extension = 'jpeg'
+            files['file'] = (file_name, f, 'image/' + file_extension)
+            del params['_file']
 
         if '_id' in self.uri:
             try:
@@ -60,7 +74,7 @@ class MsdnCall(object):
         elif self.method == 'PUT':
             response = requests.put(self.uri, headers=headers, params=params)
         elif self.method == 'POST':
-            response = requests.post(self.uri, headers=headers, data=params)
+            response = requests.post(self.uri, headers=headers, data=params, files=files)
         elif self.method == 'PATCH':
             response = requests.patch(self.uri, headers=headers, data=params)
         elif self.method == 'DELETE':
@@ -68,10 +82,16 @@ class MsdnCall(object):
         else:
             raise Exception()
 
+        if have_file:
+            f.close()
+        
         return response
 
     def build_uri(self, base, part):
         return base + '/' + part
+
+    def reset_method(self):
+        self.method = 'GET'
 
 
 class Msdn(MsdnCall):
