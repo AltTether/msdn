@@ -2,13 +2,20 @@ import os
 import json
 import unittest
 
+import tests.config as config
+
 from msdn import Msdn
 
-base_uri = 'https://'
-access_token = os.environ['MASTODON_ACCESS_TOKEN']
+base_uri = config.BASE_URI
+access_token = config.ACCESS_TOKEN
+
 msdn = Msdn(base_uri, access_token)
 
-test_id = ''
+test_id = config.TEST_ID
+test_domain = config.TEST_DOMAIN
+test_filter_id = config.TEST_FILTER_ID
+test_list_id = config.TEST_LIST_ID
+test_notification_id = config.TEST_NOTIFICATION_ID
 
 class TestApi(unittest.TestCase):
     def test_fetching_accounts(self):
