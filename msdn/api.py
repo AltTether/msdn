@@ -1,5 +1,6 @@
 import os
 import json
+import base64
 import requests
 
 from .actions import POST_ACTIONS, PATCH_ACTIONS
@@ -11,6 +12,7 @@ API_ENDPOINT_START = 'api'
 class MsdnCall(object):
     def __init__(self, access_token=None, call_cls=None, uri=None, method='GET'):
         self.access_token = access_token
+
         self.call_cls = call_cls
         self.uri = uri
         self.method = method
@@ -19,6 +21,7 @@ class MsdnCall(object):
         try:
             object.__getattr__(self, k)
         except AttributeError:
+
             method = self.method
             if k in POST_ACTIONS:
                 method = 'POST'
@@ -44,6 +47,14 @@ class MsdnCall(object):
                 file_extension = 'jpeg'
             files['file'] = (file_name, f, 'image/' + file_extension)
             del params['_file']
+
+        if 'auth_secret' in params and 'public_key' in params and '_endpoint' in params:
+            params['subscription[endpoint]'] = params['_endpoint']
+            params['subscription[keys][p256dh]'] = params['public_key']
+            params['subscription[keys][auth]'] = params['auth_secret']
+            del params['_endpoint']
+            del params['public_key']
+            del params['auth_secret']
 
         if '_id' in self.uri:
             try:
