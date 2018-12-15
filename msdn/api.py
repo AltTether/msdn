@@ -72,13 +72,13 @@ class MsdnCall(object):
             except:
                 raise Exception('_hashtag params not found')
 
-        if '_list_id' in self.uri:
+        if '_listid' in self.uri:
             try:
-                list_id = params['_list_id']
-                self.uri = self.uri.replace('_list_id', list_id)
-                del params['_list_id']
+                list_id = params['_listid']
+                self.uri = self.uri.replace('_listid', list_id)
+                del params['_listid']
             except:
-                raise Exception('_list_id params not found')
+                raise Exception('_listid params not found')
 
         if '_method' in params:
             self.method = params['_method']
