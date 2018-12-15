@@ -62,7 +62,7 @@ class MsdnCall(object):
                 self.uri = self.uri.replace('_id', _id)
                 del params['_id']
             except:
-                print('_id params not found')
+                raise Exception('_id params not found')
 
         if '_hashtag' in self.uri:
             try:
