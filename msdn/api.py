@@ -94,10 +94,14 @@ class MsdnCall(object):
                 params[key+"[]"] = value
                 del params[key]
 
+        stream = False
+        if 'streaming' in self.uri:
+            stream = True
+
         headers = {'Authorization': 'Bearer ' + self.access_token}
         response = None
         if self.method == 'GET':
-            response = requests.get(self.uri, headers=headers, params=params)
+            response = requests.get(self.uri, headers=headers, params=params, stream=stream)
         elif self.method == 'PUT':
             response = requests.put(self.uri, headers=headers, params=params)
         elif self.method == 'POST':
