@@ -16,7 +16,7 @@ $ python3 setup.py install
 Now, It has only this way to install.  
 I would provide other way.  
 
-## Simple Usage
+## Example
 ``` {.sourceCode .python}
 >>> from msdn import Msdn
 >>> BASE_URI = 'https://hogetodon.com'
