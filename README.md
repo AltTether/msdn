@@ -2,6 +2,9 @@
 msdn is Mastodon api for python.  
 This api is implemented by refering to sixohsix's api "[Twitter](https://github.com/sixohsix/twitter)"  
 
+# Requirements
+- Python 3.6
+
 ## Installation
 1. Cloning this repository
 ``` {.sourceCode .bash}
