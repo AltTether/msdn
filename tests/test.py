@@ -203,7 +203,7 @@ class TestApi(unittest.TestCase):
 
 
     def test_uploading_updating_media_attachment(self):
-        response = msdn.media(_file='./test_img/sample.jpg', _method='POST', description='hogehoge')
+        response = msdn.media(_file='./tests/test_img/sample.jpg', _method='POST', description='hogehoge')
         self.assertEqual(response.status_code, 200)
         media_id = json.loads(response.text)['id']
         response = msdn.media._id(_id=media_id, description='hugahuga', _method='PUT')
