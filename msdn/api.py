@@ -21,7 +21,6 @@ class MsdnCall(object):
         try:
             object.__getattr__(self, k)
         except AttributeError:
-
             method = self.method
             if k in POST_ACTIONS:
                 method = 'POST'
@@ -32,10 +31,38 @@ class MsdnCall(object):
                                  call_cls=self.call_cls,
                                  uri=self.build_uri(self.uri, k),
                                  method=method)
+
     def __call__(self, **kargs):
         params = dict(kargs)
-        files = dict()
 
+        params, files = self.convert_params(params)
+
+        stream = False
+        if 'streaming' in self.uri:
+            stream = True
+
+        headers = {'Authorization': 'Bearer ' + self.access_token}
+        response = None
+        if self.method == 'GET':
+            response = requests.get(self.uri, headers=headers, params=params, stream=stream)
+        elif self.method == 'PUT':
+            response = requests.put(self.uri, headers=headers, params=params)
+        elif self.method == 'POST':
+            response = requests.post(self.uri, headers=headers, data=params, files=files)
+        elif self.method == 'PATCH':
+            response = requests.patch(self.uri, headers=headers, data=params)
+        elif self.method == 'DELETE':
+            response = requests.delete(self.uri, headers=headers, data=params)
+        else:
+            raise Exception()
+
+        return response
+
+    def build_uri(self, base, part):
+        return base + '/' + part
+
+    def convert_params(self, params):
+        files = dict()
         if '_file' in params:
             have_file = True
             file_path = params['_file']
@@ -95,33 +122,7 @@ class MsdnCall(object):
                 params[key+"[]"] = value
                 del params[key]
 
-        stream = False
-        if 'streaming' in self.uri:
-            stream = True
-
-        headers = {'Authorization': 'Bearer ' + self.access_token}
-        response = None
-        if self.method == 'GET':
-            response = requests.get(self.uri, headers=headers, params=params, stream=stream)
-        elif self.method == 'PUT':
-            response = requests.put(self.uri, headers=headers, params=params)
-        elif self.method == 'POST':
-            response = requests.post(self.uri, headers=headers, data=params, files=files)
-        elif self.method == 'PATCH':
-            response = requests.patch(self.uri, headers=headers, data=params)
-        elif self.method == 'DELETE':
-            response = requests.delete(self.uri, headers=headers, data=params)
-        else:
-            raise Exception()
-
-        return response
-
-    def build_uri(self, base, part):
-        return base + '/' + part
-
-    def reset_method(self):
-        self.method = 'GET'
-
+        return params, files
 
 class Msdn(MsdnCall):
     def __init__(self, base_uri, access_token):
