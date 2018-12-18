@@ -65,20 +65,8 @@ class MsdnCall(object):
     def build_uri(self, base, part):
         return base + '/' + part
 
-    def convert_params(self, params):
-        files = dict()
-        if '_file' in params:
-            have_file = True
-            file_path = params['_file']
-            file_name = os.path.basename(file_path)
-            _, file_extension = os.path.splitext(file_name)
-            _file = None
-            with open(file_path, 'rb') as f:
-                _file = f.read()
-            if file_extension == 'jpg':
-                file_extension = 'jpeg'
-            files['file'] = (file_name, _file, 'image/' + file_extension)
-            del params['_file']
+    def convert_params(self):
+        self.generate_files()
 
         if 'auth_secret' in params and 'public_key' in params and '_endpoint' in params:
             params['subscription[endpoint]'] = params['_endpoint']
@@ -127,6 +115,23 @@ class MsdnCall(object):
                 del params[key]
 
         return params, files
+
+    def generate_files(self):
+        self.files = dict()
+        if '_file' in self.params:
+            file_path = self.params['_file']
+            file_name = os.path.basename(file_path)
+            _, file_extension = os.path.splitext(file_name)
+
+            _file = None
+            with open(file_path, 'rb') as f:
+                _file = f.read()
+
+            if file_extension == 'jpg':
+                file_extension = 'jpeg'
+
+            self.files['file'] = (file_name, _file, 'image/' + file_extension)
+            del self.params['_file']
 
 class Msdn(MsdnCall):
     def __init__(self, base_uri, access_token):
