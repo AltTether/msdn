@@ -12,10 +12,14 @@ API_ENDPOINT_START = 'api'
 class MsdnCall(object):
     def __init__(self, access_token=None, call_cls=None, uri=None, method='GET'):
         self.access_token = access_token
-
         self.call_cls = call_cls
         self.uri = uri
         self.method = method
+
+        self.headers = None
+        self.params = None
+        self.files = None
+        self.stream = False
 
     def __getattr__(self, k):
         try:
@@ -33,26 +37,26 @@ class MsdnCall(object):
                                  method=method)
 
     def __call__(self, **kargs):
-        params = dict(kargs)
+        self.params = dict(kargs)
 
-        params, files = self.convert_params(params)
+        self.convert_params()
 
-        stream = False
         if 'streaming' in self.uri:
-            stream = True
+            self.stream = True
 
-        headers = {'Authorization': 'Bearer ' + self.access_token}
+        self.headers = {'Authorization': 'Bearer ' + self.access_token}
+
         response = None
         if self.method == 'GET':
-            response = requests.get(self.uri, headers=headers, params=params, stream=stream)
+            response = requests.get(self.uri, headers=self.headers, params=self.params, stream=self.stream)
         elif self.method == 'PUT':
-            response = requests.put(self.uri, headers=headers, params=params)
+            response = requests.put(self.uri, headers=self.headers, params=self.params)
         elif self.method == 'POST':
-            response = requests.post(self.uri, headers=headers, data=params, files=files)
+            response = requests.post(self.uri, headers=self.headers, data=self.params, files=self.files)
         elif self.method == 'PATCH':
-            response = requests.patch(self.uri, headers=headers, data=params)
+            response = requests.patch(self.uri, headers=self.headers, data=self.params)
         elif self.method == 'DELETE':
-            response = requests.delete(self.uri, headers=headers, data=params)
+            response = requests.delete(self.uri, headers=self.headers, data=self.params)
         else:
             raise Exception()
 
