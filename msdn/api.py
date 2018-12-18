@@ -36,16 +36,17 @@ class MsdnCall(object):
         params = dict(kargs)
         files = dict()
 
-        have_file = False
         if '_file' in params:
             have_file = True
             file_path = params['_file']
             file_name = os.path.basename(file_path)
             _, file_extension = os.path.splitext(file_name)
-            f = open(file_path, 'rb')
+            _file = None
+            with open(file_path, 'rb') as f:
+                _file = f.read()
             if file_extension == 'jpg':
                 file_extension = 'jpeg'
-            files['file'] = (file_name, f, 'image/' + file_extension)
+            files['file'] = (file_name, _file, 'image/' + file_extension)
             del params['_file']
 
         if 'auth_secret' in params and 'public_key' in params and '_endpoint' in params:
@@ -113,9 +114,6 @@ class MsdnCall(object):
         else:
             raise Exception()
 
-        if have_file:
-            f.close()
-        
         return response
 
     def build_uri(self, base, part):
