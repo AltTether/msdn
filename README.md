@@ -30,5 +30,5 @@ you need to prepare access_token in the instance, and using this code.
 >>> msdn = Msdn(base_uri, token)
 >>> response = msdn.accounts.verify_credentials()
 >>> response.text
-{"id":"YOUR_ID","username":"YOUR_USERNAME","acct":"YOUR_ACCT","display_name":"YOUR_DISPLAY_NAME","locked":false,"bot":false,...}
+{"id":"YOUR_ID","username":"YOUR_USERNAME","acct":"YOUR_ACCT","display_name":"YOUR_DISPLAY_NAME",...}
 ```
