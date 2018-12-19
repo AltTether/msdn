@@ -34,5 +34,5 @@ you need to prepare access_token in the instance, and using this code.
 ```  
 
 ## License
-msdn is licensed under the [MIT](https://github.com/AltTether/msdn/blob/master/LICENSE) license.
+msdn is licensed under the [MIT](https://github.com/AltTether/msdn/blob/master/LICENSE) license.  
 Copyright (c) 2018 AltT
