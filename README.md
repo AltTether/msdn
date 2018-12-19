@@ -20,8 +20,8 @@ Now, It has only this way to install.
 I would provide other way.  
 
 ## Example
-For example, if you want to use web api of endpoint "/v1/api/accounts/verify_credentials" in mstdn.jp instance,
-you need to prepare access_token in the instance, and using this code.
+For example, if you want to use web api of endpoint "/v1/api/accounts/verify_credentials" in mstdn.jp instance,  
+you need to prepare access_token in the instance, and using this code.  
 
 ``` {.sourceCode .python}
 >>> from msdn import Msdn
@@ -31,4 +31,4 @@ you need to prepare access_token in the instance, and using this code.
 >>> response = msdn.accounts.verify_credentials()
 >>> response.text
 {"id":"YOUR_ID","username":"YOUR_USERNAME","acct":"YOUR_ACCT","display_name":"YOUR_DISPLAY_NAME",...}
-```
+```  
