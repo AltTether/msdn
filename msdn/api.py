@@ -66,20 +66,13 @@ class MsdnCall(object):
         return base + '/' + part
 
     def convert_params(self):
-        self.generate_files()
-
+        self.generate_files_from_params()
         self.convert_push_subscription_params_with_params()
-
         self.convert_uri_id_with_params()
-
         self.convert_uri_hashtag_with_params()
-
         self.convert_uri_listid_with_params()
-
         self.update_method_with_params()
-
         self.convert_bool_in_params()
-
         self.convert_array_in_params()
 
     def generate_files_from_params(self):
