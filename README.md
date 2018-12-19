@@ -32,3 +32,7 @@ you need to prepare access_token in the instance, and using this code.
 >>> response.text
 {"id":"YOUR_ID","username":"YOUR_USERNAME","acct":"YOUR_ACCT","display_name":"YOUR_DISPLAY_NAME",...}
 ```  
+
+## License
+msdn is licensed under the [MIT](https://github.com/AltTether/msdn/blob/master/LICENSE) license.
+Copyright (c) 2018 AltT
