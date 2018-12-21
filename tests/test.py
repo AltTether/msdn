@@ -17,6 +17,7 @@ test_domain = config.TEST_DOMAIN
 test_filter_id = config.TEST_FILTER_ID
 test_list_id = config.TEST_LIST_ID
 test_notification_id = config.TEST_NOTIFICATION_ID
+test_status_id = config.TEST_STATUS_ID
 
 class TestApi(unittest.TestCase):
     def test_fetching_accounts(self):
@@ -202,7 +203,7 @@ class TestApi(unittest.TestCase):
 
 
     def test_uploading_updating_media_attachment(self):
-        response = msdn.media(_file='./test_img/sample.jpg', _method='POST', description='hogehoge')
+        response = msdn.media(_file='./tests/test_img/sample.jpg', _method='POST', description='hogehoge')
         self.assertEqual(response.status_code, 200)
         media_id = json.loads(response.text)['id']
         response = msdn.media._id(_id=media_id, description='hugahuga', _method='PUT')
@@ -229,9 +230,9 @@ class TestApi(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_adding_push_subscription(self):
-        public_key =
+        public_key = ''
         auth_secret = base64.b64encode(os.urandom(16))
-        endpoint =
+        endpoint = ''
         response = msdn.push.subscription(_method='POST',
                                           _endpoint=endpoint,
                                           public_key=public_key,
@@ -272,4 +273,62 @@ class TestApi(unittest.TestCase):
 
     def test_getting_card_associated_with_status(self):
         response = msdn.statuses._id.card(_id=test_id)
+        self.assertEqual(response.status_code, 200)
+
+    def test_getting_who_reblogged_favourited_status(self):
+        response = msdn.statuses._id.reblogged_by(_id=test_status_id)
+        self.assertEqual(response.status_code, 200)
+        response = msdn.statuses._id.favourited_by(_id=test_status_id)
+        self.assertEqual(response.status_code, 200)
+
+    def test_posting_new_status(self):
+        response = msdn.statuses(status='hogehoge', _method='POST')
+        self.assertEqual(response.status_code, 200)
+
+    def test_deleting_status(self):
+        response = msdn.statuses._id(_id=test_status_id, _method='DELETE')
+        self.assertEqual(response.status_code, 200)
+
+    def test_reblogging_unreblogging_status(self):
+        response = msdn.statuses._id.reblog(_id=test_status_id, _method='POST')
+        self.assertEqual(response.status_code, 200)
+        response = msdn.statuses._id.unreblog(_id=test_status_id, _method='POST')
+        self.assertEqual(response.status_code, 200)
+
+    def test_favouriting_unfavouriting_status(self):
+        response = msdn.statuses._id.favourite(_id=test_status_id, _method='POST')
+        self.assertEqual(response.status_code, 200)
+        response = msdn.statuses._id.unfavourite(_id=test_status_id, _method='POST')
+        self.assertEqual(response.status_code, 200)
+
+    def test_pinning_unpinning_status(self):
+        response = msdn.statuses._id.pin(_id=test_status_id, _method='POST')
+        self.assertEqual(response.status_code, 200)
+        response = msdn.statuses._id.unpin(_id=test_status_id, _method='POST')
+        self.assertEqual(response.status_code, 200)
+
+    def test_muting_unmuting_status(self):
+        response = msdn.statuses._id.mute(_id=test_status_id, _method='POST')
+        self.assertEqual(response.status_code, 200)
+        response = msdn.statuses._id.unmute(_id=test_status_id, _method='POST')
+        self.assertEqual(response.status_code, 200)
+
+    def test_retrieving_home_timeline(self):
+        response = msdn.timelines.home()
+        self.assertEqual(response.status_code, 200)
+
+    def test_retrieving_public_timeline(self):
+        response = msdn.timelines.public()
+        self.assertEqual(response.status_code, 200)
+
+    def test_retrieving_hashtag_timeline(self):
+        response = msdn.timelines.tag._hashtag(_hashtag='hoge')
+        self.assertEqual(response.status_code, 200)
+
+    def test_retrieving_list_timeline(self):
+        response = msdn.timelines.list._listid(_listid=test_list_id)
+        self.assertEqual(response.status_code, 200)
+
+    def test_retrieving_direct_timeline(self):
+        response = msdn.timelines.direct()
         self.assertEqual(response.status_code, 200)

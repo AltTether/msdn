@@ -7,12 +7,11 @@ from .actions import POST_ACTIONS, PATCH_ACTIONS
 
 
 API_VERSION = 'v1'
-API_ENDPOINT_START = 'api'
+ENDPOINT_START_TOKEN = 'api'
 
 class MsdnCall(object):
     def __init__(self, access_token=None, call_cls=None, uri=None, method='GET'):
         self.access_token = access_token
-
         self.call_cls = call_cls
         self.uri = uri
         self.method = method
@@ -32,20 +31,22 @@ class MsdnCall(object):
                                  call_cls=self.call_cls,
                                  uri=self.build_uri(self.uri, k),
                                  method=method)
+
     def __call__(self, **kargs):
         params = dict(kargs)
         files = dict()
 
-        have_file = False
         if '_file' in params:
             have_file = True
             file_path = params['_file']
             file_name = os.path.basename(file_path)
             _, file_extension = os.path.splitext(file_name)
-            f = open(file_path, 'rb')
+            _file = None
+            with open(file_path, 'rb') as f:
+                _file = f.read()
             if file_extension == 'jpg':
                 file_extension = 'jpeg'
-            files['file'] = (file_name, f, 'image/' + file_extension)
+            files['file'] = (file_name, _file, 'image/' + file_extension)
             del params['_file']
 
         if 'auth_secret' in params and 'public_key' in params and '_endpoint' in params:
@@ -113,9 +114,6 @@ class MsdnCall(object):
         else:
             raise Exception()
 
-        if have_file:
-            f.close()
-        
         return response
 
     def build_uri(self, base, part):
@@ -126,10 +124,11 @@ class MsdnCall(object):
 
 
 class Msdn(MsdnCall):
-    def __init__(self, base_uri, access_token):
+    def __init__(self, base_uri, access_token, api_version=API_VERSION, endpoint_start_token=ENDPOINT_START_TOKEN):
         self.base_uri = base_uri
         self.access_token = access_token
-        self.uri = self.build_uri(self.build_uri(base_uri, API_ENDPOINT_START), API_VERSION)
+        self.uri = self.build_uri(base_uri, endpoint_start_token)
+        self.uri = self.build_uri(self.uri, api_version)
         super(Msdn, self).__init__(access_token=self.access_token,
                                    call_cls=MsdnCall,
                                    uri=self.uri)
